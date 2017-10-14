@@ -5,26 +5,73 @@ date: "14/10/2017"
 output: html_document
 ---
 
+## EXERCISE 1
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+source("functions.R")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+print(sum_column(iris, "Sepal.Length"))
+print(sum_column(iris, "Species"))
+print(sum_column(warpbreaks, "breaks"))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+print(my_sum(iris$Sepal.Length))
+print(my_sum(iris$Species))
+print(my_sum(warpbreaks$breaks))
+```
+
+```{r}
+print(sum_divided_by(iris$Sepal.Length, 12))
+print(sum_divided_by(iris$Species, 22))
+print(sum_divided_by(iris$Sepal.Length, "Not numeric"))
+print(sum_divided_by(warpbreaks$breaks, -12))
+```
+
+```{r}
+print(my_mean(iris$Sepal.Length))
+print(my_mean(iris$Species))
+print(my_mean(warpbreaks$breaks))
+```
+
+## EXERCISE 2
+
+```{r}
+print(grouped_violin_plot(iris, "Sepal.Length", "Species"))
+```
+
+```{r}
+p <- grouped_violin_plot(iris, "Sepal.Length", "Species")
+# YOUR CODE HERE: Change the colour scheme for the interior of the three violin plots
+#                 to anything else at all.
+p <- p + ggplot2::scale_fill_brewer(palette="PRGn")
+# YOUR CODE HERE: Add a main title that says "Iris data".
+p <- p + ggplot2::ggtitle("New Iris Data")
+print(p)
+```
+
+## EXERCISE 3
+
+```{r}
+difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica")
+difference_in_medians(iris, "Sepal.Width", "Species", "virginica", "virginica")
+```
+
+```{r}
+iris$Sepal.Width[1:10]
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+randomize(iris, "Sepal.Width")$Sepal.Width[1:10]
+randomize(iris, "Species")$Species[1:10]
+randomize(iris, "Species")$Sepal.Width[1:10]
+set.seed(previous_seed)
+```
+
+
