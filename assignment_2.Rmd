@@ -11,22 +11,29 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ```{r}
 source("functions.R")
 ```
 
+
+## EXERCISE 1
+
+a.
 ```{r}
 print(sum_column(iris, "Sepal.Length"))
 print(sum_column(iris, "Species"))
 print(sum_column(warpbreaks, "breaks"))
 ```
 
+b.
 ```{r}
 print(my_sum(iris$Sepal.Length))
 print(my_sum(iris$Species))
 print(my_sum(warpbreaks$breaks))
 ```
 
+c.
 ```{r}
 print(sum_divided_by(iris$Sepal.Length, 12))
 print(sum_divided_by(iris$Species, 22))
@@ -34,6 +41,7 @@ print(sum_divided_by(iris$Sepal.Length, "Not numeric"))
 print(sum_divided_by(warpbreaks$breaks, -12))
 ```
 
+d.
 ```{r}
 print(my_mean(iris$Sepal.Length))
 print(my_mean(iris$Species))
@@ -42,10 +50,12 @@ print(my_mean(warpbreaks$breaks))
 
 ## EXERCISE 2
 
+a.
 ```{r}
 print(grouped_violin_plot(iris, "Sepal.Length", "Species"))
 ```
 
+b. 
 ```{r}
 p <- grouped_violin_plot(iris, "Sepal.Length", "Species")
 # YOUR CODE HERE: Change the colour scheme for the interior of the three violin plots
@@ -58,11 +68,13 @@ print(p)
 
 ## EXERCISE 3
 
+a.
 ```{r}
 difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica")
 difference_in_medians(iris, "Sepal.Width", "Species", "virginica", "virginica")
 ```
 
+b. 
 ```{r}
 iris$Sepal.Width[1:10]
 if(!exists(".Random.seed")) set.seed(NULL)
@@ -74,4 +86,59 @@ randomize(iris, "Species")$Sepal.Width[1:10]
 set.seed(previous_seed)
 ```
 
+c.
+```{r}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest_1 <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                 "virginica", difference_in_medians, n_samples=10)
+ptest_2 <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                 "virginica", difference_in_medians, n_samples=10)
+ptest_3 <- permutation_twogroups(randomize(iris, "Sepal.Width"), "Sepal.Width",
+                                 "Species", "versicolor", "virginica",
+                                 difference_in_medians, n_samples=10)
+set.seed(previous_seed)
+print(ptest_1)
+print(ptest_2)
+print(ptest_3)
+print(ptest_3$observed)
+print(ptest_3[["observed"]])
+```
 
+d. Does it matter for your permutation test whether you permute var or grouping_var? Why or why not?
+Yes, it matters. I have tested changing var to grouping_var and the result changes too. If we permute grouping_var, in the first example, for instance, what will be permute are the "Species" (setosa, versicolor, etc) and not the "Sepal.Width", that are the numbers that we want to permute.
+
+
+e.
+```{r}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                              "virginica", difference_in_medians)
+set.seed(previous_seed)
+```
+```{r}
+
+ptest_d <- tibble::as_tibble(ptest["permuted"])
+# YOUR CODE HERE: plot a histogram with a vertical line at the observed value
+```
+
+What do you conclude from your plot?
+
+f.
+```{r}
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest_new <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
+                                   "virginica", new_test_statistic)
+set.seed(previous_seed)
+```
+*histogram
+*discussion comparing and contrasting the two histograms, and see if you can explain any differences you see.
+
+g.
+
+h.

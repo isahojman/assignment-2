@@ -164,9 +164,58 @@ randomize <- function(d, var) {
 }
 
 
+# Perform a permutation test for two groups.
+#
+# ARGUMENTS:
+# d: a data frame or tibble
+# var: the name of the column in d on which the test statistic will be calculated,
+#      provided as a string
+# grouping_var: the name of the column in d which gives the grouping
+# group1: the value of grouping_var corresponding to the first group
+# group2: the value of grouping_var corresponding to the second group
+# statistic: a function yielding a test statistic, which takes as input
+#            a data frame, the name of a variable on which to calculate the
+#            test statistic, the name of a grouping variable, the value of
+#            the grouping variable corresponding to the first group, and
+#            the value of the grouping variable corresponding to the second
+#            group
+# n_samples: the number of permutation samples to draw (default: 9999)
+#
+# RETURN VALUE:
+#
+# A list containing two elements:
+#
+#  - observed: the value of statistic() in d
+#  - permuted: a vector containing the values of statistic() under n_samples
+#              permutations
+#
+permutation_twogroups <- function(d, var, grouping_var, group1, group2, statistic,
+                                  n_samples=9999) {
+  observed_statistic <- statistic(d, var, grouping_var, group1, group2)
+  permutation_statistics <- rep(0, n_samples)
+  for (i in 1:n_samples) {
+    ran_d <- randomize(d, var)
+    permutation_statistics[i] <- statistic(ran_d, var, grouping_var, group1, group2)
+  }
+  result <- list(observed=observed_statistic,
+                 permuted=permutation_statistics)
+  return(result)
+}
 
 
 
+
+
+permutation_pvalue_right <- function(p) {
+  n_above <- sum(p$permuted >= p$observed)
+  n_samples <- length(p$permuted)
+  return((n_above + 1)/(n_samples + 1))
+}
+permutation_pvalue_left <- function(p) {
+  n_below <- sum(p$permuted <= p$observed)
+  n_samples <- length(p$permuted)
+  return((n_below + 1)/(n_samples + 1))
+}
 
 
 
