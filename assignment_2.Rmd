@@ -111,7 +111,7 @@ Yes, it matters. I have tested changing var to grouping_var and the result chang
 
 
 e.
-```{r}
+```{r, cache=T}
 if(!exists(".Random.seed")) set.seed(NULL)
 previous_seed <- .Random.seed
 set.seed(1)
@@ -119,13 +119,17 @@ ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
                               "virginica", difference_in_medians)
 set.seed(previous_seed)
 ```
-```{r}
 
+```{r}
 ptest_d <- tibble::as_tibble(ptest["permuted"])
-# YOUR CODE HERE: plot a histogram with a vertical line at the observed value
+p <- ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted")) +
+  ggplot2::geom_histogram(colour="black", fill="orange") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick")
+print(p)
 ```
 
 What do you conclude from your plot?
+We can see that the more frequent value for the difference of the medians in the permuted samples (0.0) is not the value observed for the entire samples (-0.2).
 
 f.
 ```{r}

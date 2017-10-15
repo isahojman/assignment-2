@@ -203,6 +203,27 @@ permutation_twogroups <- function(d, var, grouping_var, group1, group2, statisti
 }
 
 
+# Difference in the medians between two groups.
+#
+# ARGUMENTS:
+# d: a data frame or tibble
+# var: the name of a column of d containing the dependent variable, provided as a string
+# grouping_var: the name of a column of d containing a grouping variable, provided as a string
+# group1: the value of grouping_var that corresponds to the first group
+# group2: the value of grouping_var that corresponds to the second group
+#
+# RETURN VALUE:
+# The median value of var for the first group, minus the median value of var for the second
+# group.
+#
+new_test_statistics <- function(d, var, grouping_var, group1, group2) {
+  d_1 <- dplyr::filter(d, get(grouping_var) == group1)
+  d_2 <- dplyr::filter(d, get(grouping_var) == group2)
+  # YOUR CODE HERE: assign the difference in the medians to to the variable 'result'
+  result <- median(d_1[[var]]) - median(d_2[[var]])
+  return(result)
+}
+
 
 
 
