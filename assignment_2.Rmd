@@ -123,7 +123,8 @@ set.seed(previous_seed)
 ```{r}
 ptest_d <- tibble::as_tibble(ptest["permuted"])
 p <- ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted")) +
-  ggplot2::geom_histogram(colour="black", fill="orange") +
+  ggplot2::geom_histogram(colour="black", fill="firebrick") +
+  ggplot2::ylim(c(0, 6000)) +
   ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick") +
   ggplot2::ggtitle("Difference in medians")
 print(p)
@@ -154,4 +155,65 @@ In the second histogram, we can see the difference betweens means in the permute
 
 g.
 
+```{r}
+pvalue_r <- permutation_pvalue_right(ptest)
+pvalue_l <- permutation_pvalue_left(ptest)
+print(pvalue_r)
+print(pvalue_l)
+```
+
+Let's take the example of A1 Spanish learners, divided in two groups: portuguese speakers and german speakers.
+We'd predict that the difference in the medians statistic would be extreme on the right
+side if our *Hypothesis B* were that the two groups are not equal in terms of time of response to an associate-image-to-word task.
+In which case, we would use the function permutation_pvalue_right because if its value is extreme, the Hypotesis B would be considered true.
+
 h.
+
+```{r, cache=T}
+iris_subset_1 <- iris[c(89:94, 108:112),]
+iris_subset_2 <- iris[88:114,]
+
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest1 <- permutation_twogroups(iris_subset_1, "Sepal.Width", "Species", "versicolor",
+                              "virginica", difference_in_medians)
+ptest2 <- permutation_twogroups(iris_subset_2, "Sepal.Width", "Species", "versicolor",
+                              "virginica", difference_in_medians)
+set.seed(previous_seed)
+```
+
+```{r}
+ptest_1 <- tibble::as_tibble(ptest1["permuted"])
+ptest_2 <- tibble::as_tibble(ptest2["permuted"])
+p_1 <- ggplot2::ggplot(ptest_1, ggplot2::aes_string(x="permuted")) +
+  ggplot2::geom_histogram(colour="black", fill="pink") +
+  ggplot2::ylim(c(0, 6000)) +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest1[["observed"]]), lwd=0.6, color="pink") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest2[["observed"]]), lwd=0.6, color="blue") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick") +
+  ggplot2::ggtitle("Difference in medians - Subset 1")
+print(p_1)
+p_2 <- ggplot2::ggplot(ptest_2, ggplot2::aes_string(x="permuted")) +
+  ggplot2::geom_histogram(colour="black", fill="blue") +
+  ggplot2::ylim(c(0, 6000)) +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest1[["observed"]]), lwd=0.6, color="pink") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest2[["observed"]]), lwd=0.6, color="blue") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick") +
+  ggplot2::ggtitle("Difference in medians - Subset 2")
+print(p_2)
+```
+
+
+* We can see that the three histograms are different. The one for the Subset 1 presents more samples in the values that are not so close to 0.00, while in the Subset 2 the samples are all around 0.00. In both cases, the  data is more sparse than in the histogram in 3e.
+
+* The observed value for Subset 2 is closer to the observed value of the entire group than the one in the Subset 1, which is logical since the values for the permuted samples in Subset 2 are more similar to the orginal group values.
+
+```{r}
+print(permutation_pvalue_left(ptest1))
+print(permutation_pvalue_right(ptest1))
+print(permutation_pvalue_left(ptest2))
+print(permutation_pvalue_right(ptest2))
+```
+
+* Based on the histogramms, it's reasonable to say that the groups of observations don't come from the same source of variability.
