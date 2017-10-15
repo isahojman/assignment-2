@@ -194,6 +194,8 @@ p_1 <- ggplot2::ggplot(ptest_1, ggplot2::aes_string(x="permuted")) +
   ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick") +
   ggplot2::ggtitle("Difference in medians - Subset 1")
 print(p_1)
+```
+```{r}
 p_2 <- ggplot2::ggplot(ptest_2, ggplot2::aes_string(x="permuted")) +
   ggplot2::geom_histogram(colour="black", fill="blue") +
   ggplot2::ylim(c(0, 6000)) +
