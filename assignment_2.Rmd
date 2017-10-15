@@ -124,7 +124,8 @@ set.seed(previous_seed)
 ptest_d <- tibble::as_tibble(ptest["permuted"])
 p <- ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted")) +
   ggplot2::geom_histogram(colour="black", fill="orange") +
-  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick")
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest[["observed"]]), lwd=0.6, color="firebrick") +
+  ggplot2::ggtitle("Difference in medians")
 print(p)
 ```
 
@@ -132,7 +133,7 @@ What do you conclude from your plot?
 We can see that the more frequent value for the difference of the medians in the permuted samples (0.0) is not the value observed for the entire samples (-0.2).
 
 f.
-```{r}
+```{r, cache=T}
 if(!exists(".Random.seed")) set.seed(NULL)
 previous_seed <- .Random.seed
 set.seed(1)
@@ -140,8 +141,16 @@ ptest_new <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor",
                                    "virginica", new_test_statistic)
 set.seed(previous_seed)
 ```
-*histogram
-*discussion comparing and contrasting the two histograms, and see if you can explain any differences you see.
+```{r}
+ptest_n <- tibble::as_tibble(ptest_new["permuted"])
+p2 <- ggplot2::ggplot(ptest_n, ggplot2::aes_string(x="permuted")) +
+  ggplot2::geom_histogram(colour="black", fill="yellow") +
+  ggplot2::geom_vline(ggplot2::aes(xintercept=ptest_new[["observed"]]), lwd=0.6, color="firebrick") +
+  ggplot2::ggtitle("Difference in means")
+print(p2)
+```
+
+In the second histogram, we can see the difference betweens means in the permuted samples: the histogram shape is similar to the previous one, with a peack close to 0.0, but the samples are more distributed. The more frequent value is near 0.0, with almost 1000 samples; while in "Difference in medians", it is 0.0 with more than 5000 samples. In both cases, the observed value is -0.2 or close to it.
 
 g.
 
